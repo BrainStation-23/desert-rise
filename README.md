@@ -1,4 +1,4 @@
-# BrainStation-23 · Dessert Rice
+# BrainStation-23 · Desert Rise
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Odoo](https://img.shields.io/badge/Odoo-19.0-714B67.svg)](https://www.odoo.com/)
@@ -20,7 +20,7 @@ This repository is intended for Odoo custom development projects targeting **Odo
 ## Recommended Repository Structure
 
 ```text
-dessert-rice/
+desert-rise/
 ├── README.md
 ├── LICENSE
 ├── CONTRIBUTING.md
@@ -39,8 +39,8 @@ dessert-rice/
 
 1. Clone the repository:
    ```bash
-   git clone git@github.com:BrainStation-23/dessert-rice.git
-   cd dessert-rice
+   git clone git@github.com:BrainStation-23/desert-rise.git
+   cd desert-rise
    ```
 2. Create and activate a virtual environment:
    ```bash
@@ -54,7 +54,7 @@ dessert-rice/
    ```
 4. Add the custom addons paths to your `odoo.conf`:
    ```ini
-   addons_path = /opt/odoo/odoo/addons,/opt/odoo/dessert-rice/erp/custom_addons,/opt/odoo/dessert-rice/erp-accounting,/opt/odoo/dessert-rice/oca-addons
+   addons_path = /opt/odoo/odoo/addons,/opt/odoo/desert-rise/erp/custom_addons,/opt/odoo/desert-rise/erp-accounting,/opt/odoo/desert-rise/oca-addons
    ```
 5. Restart Odoo and update the apps list in developer mode.
 
