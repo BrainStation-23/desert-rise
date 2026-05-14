@@ -1,18 +1,18 @@
 # BrainStation-23 · Dessert Rice
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Odoo](https://img.shields.io/badge/Odoo-17.0%20%7C%2018.0-714B67.svg)](https://www.odoo.com/)
+[![Odoo](https://img.shields.io/badge/Odoo-19.0-714B67.svg)](https://www.odoo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
 Custom Odoo development repository maintained by **BrainStation-23** for production-grade addons, extensions, and implementation assets.
 
 ## Overview
 
-This repository is intended for Odoo custom development projects targeting **Odoo 17.0** and **Odoo 18.0**. It is suitable for business-specific modules, technical customizations, reporting, integrations, and deployment-ready improvements built using Odoo and OCA best practices.
+This repository is intended for Odoo custom development projects targeting **Odoo 19.0**. It is suitable for business-specific modules, technical customizations, reporting, integrations, and deployment-ready improvements built using Odoo and OCA best practices.
 
 ## Supported Stack
 
-- **Odoo:** 17.0, 18.0
+- **Odoo:** 19.0
 - **Python:** 3.10+
 - **PostgreSQL:** 14+
 - **Deployment targets:** local, staging, on-prem, Docker, Odoo.sh

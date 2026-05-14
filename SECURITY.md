@@ -6,9 +6,9 @@ Security updates are currently intended for active development targeting:
 
 | Version | Supported |
 | ------- | --------- |
-| 18.0    | Yes       |
-| 17.0    | Yes       |
-| < 17.0  | No        |
+| 19.0    | Yes       |
+
+| < 19.0  | No        |
 
 ## Reporting a Vulnerability
 
