@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Leads Webhook Integration for Odoo 19</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        :root {
+            --odoo-purple: #714B67;
+            --odoo-dark:   #3d2645;
+            --odoo-light:  #f5eef8;
+            --meta-blue:   #1877F2;
+            --accent:      #1ABC9C;
+            --text-dark:   #2C3E50;
+        }
+        body { font-family: 'Segoe UI', sans-serif; color: var(--text-dark); }
+        .hero {
+            background: linear-gradient(135deg, var(--odoo-dark) 0%, var(--odoo-purple) 60%, #a0648a 100%);
+            color: white;
+            padding: 60px 30px 50px;
+            text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+        .hero h1 { font-size: 2.6rem; font-weight: 700; margin-bottom: 12px; }
+        .hero p.lead { font-size: 1.2rem; opacity: .9; max-width: 700px; margin: 0 auto 24px; }
+        .badge-feat {
+            display: inline-block;
+            background: rgba(255,255,255,.18);
+            border: 1px solid rgba(255,255,255,.35);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 16px;
+            margin: 4px;
+            font-size: .88rem;
+        }
+        .price-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 8px 28px;
+            border-radius: 30px;
+            margin-top: 18px;
+        }
+        section { padding: 50px 20px; }
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--odoo-purple);
+            border-bottom: 3px solid var(--odoo-purple);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 3px 14px rgba(0,0,0,.08);
+            padding: 24px;
+            height: 100%;
+            transition: transform .2s;
+        }
+        .feature-card:hover { transform: translateY(-4px); }
+        .feature-icon { font-size: 2.4rem; margin-bottom: 12px; }
+        .feature-card h5 { font-weight: 700; color: var(--odoo-purple); }
+        .flow-step {
+            text-align: center;
+            padding: 18px;
+        }
+        .flow-circle {
+            width: 64px; height: 64px;
+            background: var(--odoo-purple);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+        .flow-arrow { font-size: 2rem; color: var(--odoo-purple); padding-top: 22px; }
+        .config-table th { background: var(--odoo-purple); color: white; }
+        .config-table td, .config-table th { vertical-align: middle !important; }
+        .mapping-code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: .9rem;
+        }
+        .mapping-code .key   { color: #66d9ef; }
+        .mapping-code .value { color: #a6e22e; }
+        .mapping-code .str   { color: #e6db74; }
+        .step-number {
+            display: inline-block;
+            width: 32px; height: 32px;
+            background: var(--odoo-purple);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .step-row { display: flex; align-items: flex-start; margin-bottom: 18px; }
+
+        .contact-section {
+            background: var(--text-dark);
+            color: white;
+            padding: 50px 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        .contact-card {
+            background: #3d5166;
+            border-radius: 10px;
+            padding: 22px 18px;
+            margin-top: 16px;
+            height: 100%;
+        }
+        .contact-card h5 { color: var(--accent); font-weight: 700; }
+        .contact-card a { color: #cce8ff; }
+        .compat-badge {
+            background: var(--odoo-light);
+            border: 1px solid var(--odoo-purple);
+            border-radius: 6px;
+            padding: 6px 14px;
+            display: inline-block;
+            color: var(--odoo-purple);
+            font-weight: 600;
+            margin: 4px;
+        }
+        .faq-q { font-weight: 700; color: var(--odoo-purple); cursor: pointer; }
+        .highlight-box {
+            background: var(--odoo-light);
+            border-left: 5px solid var(--odoo-purple);
+            border-radius: 0 8px 8px 0;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+        }
+        /* Screenshot styles */
+        .ss-img {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.12);
+            margin-top: 14px;
+            margin-bottom: 6px;
+        }
+        .ss-caption {
+            font-size: .82rem;
+            color: #777;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .gallery-item { margin-bottom: 30px; }
+        .step-screenshot { margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<div class="hero">
+    <h1>🔗 Meta Leads Webhook Integration</h1>
+    <p class="lead">
+        Capture every Facebook Lead Ad submission into Odoo CRM
+        automatically — in real time, with zero manual work.
+    </p>
+    <div>
+        <span class="badge-feat">⚡ Real-Time</span>
+        <span class="badge-feat">🔒 HMAC-Verified</span>
+        <span class="badge-feat">🔄 Auto-Retry Queue</span>
+        <span class="badge-feat">📋 Multi-Form</span>
+        <span class="badge-feat">🗂 Audit Trail</span>
+        <span class="badge-feat">📊 UTM Attribution</span>
+    </div>
+
+</div>
+
+<div class="container-fluid" style="max-width:1100px;">
+
+<!-- ═══════════════════════════ HOW IT WORKS ═════════════════════ -->
+<section>
+    <h2>How It Works</h2>
+    <div class="row align-items-center text-center">
+        <div class="col flow-step">
+            <div class="flow-circle">1</div>
+            <strong>Prospect fills<br>Lead Ad form</strong><br>
+            <small class="text-muted">Facebook Lead Ad</small>
+        </div>
+        <div class="col-auto flow-arrow">→</div>
+        <div class="col flow-step">
+            <div class="flow-circle">2</div>
+            <strong>Meta fires<br>Webhook</strong><br>
+            <small class="text-muted">HMAC-SHA256 signed</small>
+        </div>
+        <div class="col-auto flow-arrow">→</div>
+        <div class="col flow-step">
+            <div class="flow-circle">3</div>
+            <strong>Odoo verifies<br>&amp; enqueues</strong><br>
+            <small class="text-muted">Signature + idempotency check</small>
+        </div>
+        <div class="col-auto flow-arrow">→</div>
+        <div class="col flow-step">
+            <div class="flow-circle">4</div>
+            <strong>Graph API<br>fetch</strong><br>
+            <small class="text-muted">Full lead data retrieved</small>
+        </div>
+        <div class="col-auto flow-arrow">→</div>
+        <div class="col flow-step">
+            <div class="flow-circle">5</div>
+            <strong>CRM Lead<br>created</strong><br>
+            <small class="text-muted">Assigned to sales team</small>
+        </div>
+    </div>
+    <div class="highlight-box mt-4">
+        <strong>Typical delivery time: under 3 seconds</strong> from form submission to CRM lead — 
+        no polling, no scheduled imports, no missed leads.
+    </div>
+</section>
+
+<!-- ═══════════════════════════ SCREENSHOTS ══════════════════════ -->
+<section style="background:#f9f9f9; border-radius:12px;">
+    <h2>Screenshots</h2>
+
+    <div class="row">
+        <div class="col-md-6 gallery-item">
+            <img src="ss_01_config_list.png" class="ss-img" alt="Meta Lead Configurations list in Odoo">
+            <p class="ss-caption">Meta Lead Configurations — manage multiple Facebook Pages &amp; forms from one place</p>
+        </div>
+        <div class="col-md-6 gallery-item">
+            <img src="ss_02_config_form.png" class="ss-img" alt="Configuration form showing Page ID, Access Token, Sales Team">
+            <p class="ss-caption">Configuration form — set Page ID, Access Token, Sales Team, Stage, and UTM parameters</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 gallery-item">
+            <img src="ss_03_connect_button.png" class="ss-img" alt="Connect with Meta OAuth button on configuration form">
+            <p class="ss-caption">"Connect with Meta" — one-click OAuth flow to authorise your Facebook Page</p>
+        </div>
+        <div class="col-md-6 gallery-item">
+            <img src="ss_04_crm_leads_list.png" class="ss-img" alt="CRM Leads list showing Meta-sourced leads">
+            <p class="ss-caption">CRM Leads — incoming Meta leads appear instantly, prefixed with [Meta] for easy filtering</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 gallery-item">
+            <img src="ss_05_crm_lead_form.png" class="ss-img" alt="CRM Lead form with full Meta lead data populated">
+            <p class="ss-caption">Lead form — all Meta form fields mapped automatically to the correct CRM fields</p>
+        </div>
+        <div class="col-md-6 gallery-item">
+            <img src="ss_06_queue.png" class="ss-img" alt="Webhook queue showing pending and processed events">
+            <p class="ss-caption">Webhook Queue — every incoming event tracked with status and retry support</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 gallery-item">
+            <img src="ss_07_audit_log.png" class="ss-img" alt="Audit log listing all webhook processing attempts">
+            <p class="ss-caption">Audit Log — immutable record of every webhook event: success, error, or no-config</p>
+        </div>
+        <div class="col-md-6 gallery-item">
+            <img src="ss_09_meta_webhooks.png" class="ss-img" alt="Meta Developer Dashboard Webhooks tab showing leadgen subscription">
+            <p class="ss-caption">Meta Webhooks Dashboard — <code>leadgen</code> field shown as Subscribed on the Page product</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════ FEATURES ════════════════════════ -->
+<section>
+    <h2>Key Features</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h5>Real-Time Webhook Delivery</h5>
+                <p>Meta pushes lead events to your Odoo server within seconds of form submission — no polling, no cron imports, no lag.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h5>HMAC-SHA256 Verification</h5>
+                <p>Every incoming webhook is cryptographically verified against your App Secret. Forged or tampered requests are rejected with 403.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">🚫</div>
+                <h5>Zero Duplicate Leads</h5>
+                <p>Database-enforced uniqueness on Meta's <code>leadgen_id</code> guarantees each lead is processed exactly once — even if Meta retries the webhook.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h5>Multi-Page &amp; Multi-Form</h5>
+                <p>Create one configuration per Facebook Page, or go granular with per-form configs. Each configuration routes to its own sales team, pipeline stage, and salesperson.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">🗂</div>
+                <h5>Custom Field Mapping</h5>
+                <p>Map any Meta form field — including custom questions — to any <code>crm.lead</code> field using a simple JSON editor. Unmapped fields are preserved in the lead description.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h5>Full Audit Trail</h5>
+                <p>Every webhook event is logged with status (<em>done / error / no-config</em>), timestamp, and error details. Nothing is silently lost.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h5>Auto-Retry Queue</h5>
+                <p>Failed events (e.g. temporary API downtime) are automatically retried on the next cron cycle. No manual intervention needed.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">👤</div>
+                <h5>Automatic Contact Creation</h5>
+                <p>The module matches incoming email/phone to existing Odoo contacts before creating new ones — keeping your partner database clean.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h5>UTM Attribution</h5>
+                <p>Assign Campaign, Medium, and Source per configuration so every lead is tied to the correct marketing effort for revenue reporting.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════ FIELD MAPPING ════════════════════ -->
+<section style="background:#f9f9f9; border-radius:12px;">
+    <h2>Intelligent Field Mapping</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Standard Meta form fields are mapped automatically — no setup required:</p>
+            <table class="table table-sm table-bordered config-table">
+                <thead><tr><th>Meta Form Field</th><th>Odoo CRM Field</th></tr></thead>
+                <tbody>
+                    <tr><td><code>full_name</code></td><td>Contact Name</td></tr>
+                    <tr><td><code>first_name</code> + <code>last_name</code></td><td>Contact Name (merged)</td></tr>
+                    <tr><td><code>email</code> / <code>work_email</code></td><td>Email</td></tr>
+                    <tr><td><code>phone_number</code></td><td>Phone</td></tr>
+                    <tr><td><code>mobile_number</code></td><td>Mobile</td></tr>
+                    <tr><td><code>company_name</code></td><td>Company</td></tr>
+                    <tr><td><code>job_title</code></td><td>Job Title</td></tr>
+                    <tr><td><code>city</code> / <code>zip_code</code></td><td>City / Zip</td></tr>
+                    <tr><td><code>country</code> / <code>state</code></td><td>Country / State</td></tr>
+                    <tr><td><code>website_url</code></td><td>Website</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <p>Custom questions? Add a JSON mapping in the Configuration form:</p>
+            <div class="mapping-code">
+<span style="color:#75715e;">// Field Mapping (JSON) — Configuration form</span><br>
+{<br>
+&nbsp;&nbsp;<span class="str">"budget_range"</span>: <span class="str">"description"</span>,<br>
+&nbsp;&nbsp;<span class="str">"product_interest"</span>: <span class="str">"name"</span>,<br>
+&nbsp;&nbsp;<span class="str">"preferred_callback_time"</span>: <span class="str">"description"</span>,<br>
+&nbsp;&nbsp;<span class="str">"CUSTOM_Q_referral_source"</span>: <span class="str">"description"</span><br>
+}
+            </div>
+            <p class="mt-3 text-muted"><small>
+                Any Meta field not in the map is automatically appended to the CRM lead's
+                Description — no data is ever lost.
+            </small></p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════ CONFIGURATION ════════════════════ -->
+<section>
+    <h2>Configuration Guide</h2>
+
+    <!-- Step 1 -->
+    <div class="step-row">
+        <span class="step-number">1</span>
+        <div class="flex-fill">
+            <strong>Install the module</strong> — copy to addons, restart Odoo, install from Apps.
+            A new <strong>Meta Leads</strong> menu appears in the navigation bar.
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-row">
+        <span class="step-number">2</span>
+        <div class="flex-fill">
+            <strong>Set global system parameters</strong> (<em>Settings → Technical → System Parameters</em>):
+            <table class="table table-sm table-bordered mt-2 config-table">
+                <thead><tr><th>Key</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td><code>meta_leads.app_id</code></td><td>Your Meta App ID</td></tr>
+                    <tr><td><code>meta_leads.app_secret</code></td><td>Your Meta App Secret (kept private)</td></tr>
+                    <tr><td><code>meta_leads.verify_token</code></td><td>Any secret string you choose</td></tr>
+                </tbody>
+            </table>
+            <div class="step-screenshot">
+                <img src="ss_08_system_params.png" class="ss-img" alt="Odoo System Parameters filtered to meta_leads keys">
+                <p class="ss-caption">System Parameters — the three <code>meta_leads.*</code> keys configured in Odoo Technical Settings</p>
+            </div>
+            <p class="mt-2">Your Meta App ID and App Secret are found in the Meta Developer Dashboard under <em>App Settings → Basic</em>:</p>
+            <div class="step-screenshot">
+                <img src="ss_11_meta_app_settings.png" class="ss-img" alt="Meta Developer Dashboard App Settings Basic showing App ID">
+                <p class="ss-caption">Meta App Settings — App ID and masked App Secret on the Basic settings page</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-row">
+        <span class="step-number">3</span>
+        <div class="flex-fill">
+            <strong>Configure the Meta webhook</strong> — in your Meta App Dashboard → Webhooks,
+            set the Callback URL to:<br>
+            <code>https://yoursite.com/meta/leads/webhook</code><br>
+            and the Verify Token to match what you set in step 2.
+            Subscribe to the <strong><code>leadgen</code></strong> field.
+            <div class="step-screenshot">
+                <img src="ss_09_meta_webhooks.png" class="ss-img" alt="Meta Webhooks tab showing leadgen field as Subscribed">
+                <p class="ss-caption">Meta Webhooks — the <code>leadgen</code> field showing as <strong>Subscribed</strong> under the Page product</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3b OAuth -->
+    <div class="step-row">
+        <span class="step-number" style="background:var(--meta-blue);">3b</span>
+        <div class="flex-fill">
+            <strong>Add the OAuth Redirect URI</strong> — in Facebook Login for Business → Settings,
+            add your Odoo callback URL to <em>Valid OAuth Redirect URIs</em>:<br>
+            <code>https://yoursite.com/meta/oauth/callback</code>
+            <div class="step-screenshot">
+                <img src="ss_10_meta_oauth_redirect.png" class="ss-img" alt="Meta Facebook Login for Business Settings showing Valid OAuth Redirect URIs">
+                <p class="ss-caption">Facebook Login for Business → Settings — OAuth callback URL registered in Valid OAuth Redirect URIs</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-row">
+        <span class="step-number">4</span>
+        <div class="flex-fill">
+            <strong>Create a Lead Configuration</strong> (<em>Meta Leads → Configurations → New</em>):
+            <ul class="mt-2">
+                <li>Enter your <strong>Facebook Page ID</strong> and <strong>Page Access Token</strong></li>
+                <li>Optionally set a <strong>Lead Form ID</strong> to restrict to one form</li>
+                <li>Assign a <strong>Sales Team</strong>, <strong>Salesperson</strong>, and <strong>Stage</strong></li>
+                <li>Add UTM Campaign / Medium / Source for attribution</li>
+            </ul>
+            <div class="step-screenshot">
+                <img src="ss_02_config_form.png" class="ss-img" alt="Meta Lead Configuration form in Odoo">
+                <p class="ss-caption">Configuration form — one record per Facebook Page (or per form for granular routing)</p>
+            </div>
+            <p class="mt-2">
+                Use the <strong>Connect with Meta</strong> button to authorise access via OAuth — no need to manually
+                paste a long-lived token.
+            </p>
+            <div class="step-screenshot">
+                <img src="ss_03_connect_button.png" class="ss-img" alt="Connect with Meta button highlighted on configuration toolbar">
+                <p class="ss-caption">One-click OAuth — click "Connect with Meta" to authorise your Facebook Page</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-row">
+        <span class="step-number">5</span>
+        <div class="flex-fill">
+            <strong>Test with the Meta Lead Ads Testing Tool</strong> — go to
+            <a href="https://developers.facebook.com/tools/lead-ads-testing" target="_blank">developers.facebook.com/tools/lead-ads-testing</a>,
+            select your Page and Form, and click <em>Create lead</em>.
+            Within seconds the lead should appear in <strong>CRM → Leads</strong>.
+            <div class="step-screenshot">
+                <img src="ss_12_meta_testing_tool.png" class="ss-img" alt="Meta Lead Ads Testing Tool with Test Business Page and Odoo form selected">
+                <p class="ss-caption">Meta Lead Ads Testing Tool — select your Page and Form then click "Create lead" to send a test event</p>
+            </div>
+            <p class="mt-2">Check the result in Odoo CRM — leads arrive prefixed with <strong>[Meta]</strong>:</p>
+            <div class="step-screenshot">
+                <img src="ss_04_crm_leads_list.png" class="ss-img" alt="CRM Leads list showing Meta-sourced leads">
+                <p class="ss-caption">CRM Leads list — Meta leads appear instantly with all form fields mapped</p>
+            </div>
+            <div class="step-screenshot">
+                <img src="ss_05_crm_lead_form.png" class="ss-img" alt="CRM Lead form with full contact and lead data from Meta">
+                <p class="ss-caption">CRM Lead form — name, email, phone, company and all custom fields populated automatically</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════ MONITORING ══════════════════════ -->
+<section style="background:#f9f9f9; border-radius:12px;">
+    <h2>Monitoring &amp; Audit</h2>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="highlight-box">
+                <h6 class="font-weight-bold">📥 Meta Leads → Queue</h6>
+                <p class="mb-0">See every incoming webhook event with state
+                (<em>pending / done / error</em>), form ID, and error details.</p>
+            </div>
+            <img src="ss_06_queue.png" class="ss-img" alt="Webhook queue list">
+            <p class="ss-caption">Webhook Queue — real-time event tracking with retry state</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="highlight-box">
+                <h6 class="font-weight-bold">📋 Meta Leads → Audit Log</h6>
+                <p class="mb-0">Complete immutable history of every processing
+                attempt — success, failure, or no-config.</p>
+            </div>
+            <img src="ss_07_audit_log.png" class="ss-img" alt="Audit log list">
+            <p class="ss-caption">Audit Log — full history of every webhook received</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="highlight-box">
+                <h6 class="font-weight-bold">🔢 Leads Counter</h6>
+                <p class="mb-0">Each configuration shows a live count of leads
+                received and a "Last Lead Received" timestamp.</p>
+            </div>
+            <img src="ss_01_config_list.png" class="ss-img" alt="Configuration list with lead counts">
+            <p class="ss-caption">Config list — per-page lead counts and last-received timestamp at a glance</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════ COMPATIBILITY ════════════════════ -->
+<section>
+    <h2>Compatibility &amp; Requirements</h2>
+    <div class="mb-3">
+        <strong>Odoo Version:</strong>&nbsp;
+        <span class="compat-badge">✔ Odoo 19.0</span>
+    </div>
+    <div class="mb-3">
+        <strong>Edition:</strong>&nbsp;
+        <span class="compat-badge">✔ Community</span>
+        <span class="compat-badge">✔ Enterprise</span>
+    </div>
+    <div class="mb-3">
+        <strong>Dependencies:</strong>&nbsp;
+        <code>base, crm, mail, web</code>
+    </div>
+    <div class="mb-3">
+        <strong>External requirements:</strong>&nbsp;
+        <ul>
+            <li>A Meta (Facebook) Developer account with a Business App</li>
+            <li>A publicly accessible Odoo server with a valid SSL certificate (HTTPS)</li>
+            <li>Meta Graph API v21.0+ (no SDK install required)</li>
+        </ul>
+    </div>
+    <div class="highlight-box">
+        <strong>Note:</strong> Meta requires your webhook URL to be HTTPS.
+        For local testing, use <a href="https://ngrok.com" target="_blank">ngrok</a>
+        (<code>ngrok http 8069</code>) to create a temporary public tunnel.
+    </div>
+</section>
+
+<!-- ═══════════════════════════ FAQ ══════════════════════════════ -->
+<section style="background:#f9f9f9; border-radius:12px;">
+    <h2>Frequently Asked Questions</h2>
+
+    <p><span class="faq-q">Q: Does this work with Instagram Lead Ads?</span><br>
+    Instagram Lead Ads use the same Meta webhook infrastructure as Facebook — if your Instagram account is connected to a Facebook Page, the <code>leadgen</code> webhook event is routed through the same Page subscription. However, this has not been independently tested and is not officially supported in this release. If you need confirmed Instagram support, please contact us before purchasing.</p>
+
+    <p><span class="faq-q">Q: Can I use one Odoo for multiple Facebook Pages?</span><br>
+    Yes. Create one Configuration per Page (and optionally per Form). Each has its own sales team, pipeline stage, and field mapping.</p>
+
+    <p><span class="faq-q">Q: What happens if the same person submits the form twice?</span><br>
+    Each Meta lead has a unique <code>leadgen_id</code>. A database UNIQUE constraint ensures every lead is processed exactly once — duplicates are silently skipped.</p>
+
+    <p><span class="faq-q">Q: What if my server is temporarily down?</span><br>
+    Meta retries failed webhooks. When your server comes back online, the module automatically processes queued items. Events are never permanently lost.</p>
+
+    <p><span class="faq-q">Q: My Meta form has custom questions — will they be captured?</span><br>
+    Yes. Custom questions not in the default map are appended to the CRM lead Description. You can also define explicit JSON mappings to route them to specific Odoo fields.</p>
+
+    <p><span class="faq-q">Q: Is the Page Access Token secure?</span><br>
+    Page Access Tokens are stored in an Odoo password field (displayed as ••••) and are only used server-side to call the Meta Graph API. They are never exposed in the UI or logs.</p>
+</section>
+
+<!-- ═══════════════════════════ CONTACT ══════════════════════════ -->
+<div class="contact-section">
+    <h4 class="text-center font-weight-bold mb-2" style="color: var(--accent);">Contact &amp; Support</h4>
+    <p class="text-center mb-4">For support, customisation, or any enquiries — we're here to help.</p>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="contact-card">
+                <h5>🇧🇩 Bangladesh</h5>
+                <p>8th Floor, 2 Bir Uttam AK Khandakar Road,<br>Mohakhali C/A, Dhaka 1212</p>
+                <p><a href="mailto:erp23@brainstation-23.com">erp23@brainstation-23.com</a></p>
+                <p>+880 1719-304086</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="contact-card">
+                <h5>🇦🇪 UAE</h5>
+                <p>903, 9th Floor, DAMAC XL Tower,<br>Business Bay, Dubai</p>
+                <p><a href="mailto:erp23@brainstation-23.com">erp23@brainstation-23.com</a></p>
+                <p>+971 42420223</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="contact-card">
+                <h5>🇩🇪 Germany</h5>
+                <p>Bad Zwischenahn</p>
+                <p><a href="mailto:erp23@brainstation-23.com">erp23@brainstation-23.com</a></p>
+                <p>+49 4403 6999839</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="contact-card">
+                <h5>🇺🇸 USA</h5>
+                <p>7426 Alban Station Blvd,<br>Suite A101, Springfield, VA 22150</p>
+                <p><a href="mailto:erp23@brainstation-23.com">erp23@brainstation-23.com</a></p>
+                <p>+1 201 534 7200</p>
+            </div>
+        </div>
+    </div>
+    <p class="text-center mt-4 mb-0">
+        <a href="https://brainstation-23.com" style="color:white; font-weight:700;">brainstation-23.com</a>
+    </p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
