@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_meta_lead_log_list" model="ir.ui.view">
+            <field name="name">meta.lead.log.list</field>
+            <field name="model">meta.lead.log</field>
+            <field name="arch" type="xml">
+                <list decoration-danger="level == 'error'"
+                      decoration-warning="level == 'warning'">
+                    <field name="create_date"/>
+                    <field name="level" widget="badge"
+                           decoration-danger="level == 'error'"
+                           decoration-warning="level == 'warning'"
+                           decoration-info="level == 'info'"/>
+                    <field name="name"/>
+                    <field name="meta_lead_id"/>
+                    <field name="queue_id"/>
+                    <field name="crm_lead_id"/>
+                    <field name="message"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_meta_lead_log" model="ir.actions.act_window">
+            <field name="name">Meta Lead Logs</field>
+            <field name="res_model">meta.lead.log</field>
+            <field name="view_mode">list</field>
+        </record>
+
+    </data>
+</odoo>

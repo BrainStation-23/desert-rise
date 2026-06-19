@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_meta_lead_config_admin,meta.lead.config admin,model_meta_lead_config,bs_meta_leads_webhook.group_meta_leads_admin,1,1,1,1
+access_meta_lead_config_user,meta.lead.config user,model_meta_lead_config,bs_meta_leads_webhook.group_meta_leads_user,1,0,0,0
+access_meta_lead_queue_admin,meta.lead.queue admin,model_meta_lead_queue,bs_meta_leads_webhook.group_meta_leads_admin,1,1,1,1
+access_meta_lead_queue_user,meta.lead.queue user,model_meta_lead_queue,bs_meta_leads_webhook.group_meta_leads_user,1,0,0,0
+access_meta_lead_log_admin,meta.lead.log admin,model_meta_lead_log,bs_meta_leads_webhook.group_meta_leads_admin,1,1,1,1
+access_meta_lead_log_user,meta.lead.log user,model_meta_lead_log,bs_meta_leads_webhook.group_meta_leads_user,1,0,0,0

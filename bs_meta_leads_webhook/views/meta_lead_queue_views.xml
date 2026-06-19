@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_meta_lead_queue_list" model="ir.ui.view">
+            <field name="name">meta.lead.queue.list</field>
+            <field name="model">meta.lead.queue</field>
+            <field name="arch" type="xml">
+                <list decoration-danger="state == 'error'"
+                      decoration-success="state == 'done'"
+                      decoration-warning="state == 'processing'"
+                      decoration-muted="state == 'duplicate'">
+                    <field name="meta_lead_id"/>
+                    <field name="page_id"/>
+                    <field name="form_id"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'done'"
+                           decoration-danger="state == 'error'"
+                           decoration-warning="state in ('pending','processing')"/>
+                    <field name="retry_count"/>
+                    <field name="config_id"/>
+                    <field name="crm_lead_id"/>
+                    <field name="received_at"/>
+                    <field name="processed_at"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_meta_lead_queue_form" model="ir.ui.view">
+            <field name="name">meta.lead.queue.form</field>
+            <field name="model">meta.lead.queue</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_retry" string="Retry" type="object"
+                                invisible="state != 'error'"
+                                class="btn-primary"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="pending,processing,done,error"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="Meta Lead Data">
+                                <field name="meta_lead_id"/>
+                                <field name="page_id"/>
+                                <field name="form_id"/>
+                                <field name="ad_id"/>
+                                <field name="adset_id"/>
+                                <field name="campaign_id_meta"/>
+                            </group>
+                            <group string="Processing">
+                                <field name="config_id"/>
+                                <field name="crm_lead_id"/>
+                                <field name="retry_count"/>
+                                <field name="received_at"/>
+                                <field name="processed_at"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Raw Webhook Payload">
+                                <field name="raw_payload" widget="ace" options="{'mode': 'json'}"/>
+                            </page>
+                            <page string="Lead Data (Graph API)">
+                                <field name="lead_data" widget="ace" options="{'mode': 'json'}"/>
+                            </page>
+                            <page string="Error" invisible="not error_message">
+                                <field name="error_message"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_meta_lead_queue" model="ir.actions.act_window">
+            <field name="name">Meta Lead Queue</field>
+            <field name="res_model">meta.lead.queue</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>
