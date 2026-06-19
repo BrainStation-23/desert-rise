@@ -334,7 +334,7 @@ ul{{padding-left:20px}}a{{color:#1877f2}}</style></head>
 </div>
 <h3>Pages with updated tokens:</h3>
 <ul>{pages_html or "<li>No pages found</li>"}</ul>
-<p>You can now <a href="/web#action=meta_leads_webhook.action_meta_lead_config">open Meta Lead Configs</a> to verify.</p>
+<p>You can now <a href="/web#action=bs_meta_leads_webhook.action_meta_lead_config">open Meta Lead Configs</a> to verify.</p>
 </body>
 </html>"""
         return request.make_response(html, headers=[("Content-Type", "text/html")])

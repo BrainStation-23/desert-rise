@@ -47,7 +47,7 @@ When a prospect submits a **Lead Ad form** on Facebook or Instagram, this module
 
 3. Update the module list in Odoo:
    - Go to **Settings → Apps → Update Apps List**
-   - Or use the CLI: `odoo-bin -d <database> -u meta_leads_webhook --stop-after-init`
+   - Or use the CLI: `odoo-bin -d <database> -u bs_meta_leads_webhook --stop-after-init`
 
 4. Install the module:
    - Go to **Settings → Apps**, search for `Meta Leads Webhook Integration`, click **Install**

@@ -12,21 +12,21 @@
                   parent="menu_meta_leads_root"
                   action="action_meta_lead_config"
                   sequence="10"
-                  groups="meta_leads_webhook.group_meta_leads_admin"/>
+                  groups="bs_meta_leads_webhook.group_meta_leads_admin"/>
 
         <menuitem id="menu_meta_lead_queue"
                   name="Webhook Queue"
                   parent="menu_meta_leads_root"
                   action="action_meta_lead_queue"
                   sequence="20"
-                  groups="meta_leads_webhook.group_meta_leads_admin"/>
+                  groups="bs_meta_leads_webhook.group_meta_leads_admin"/>
 
         <menuitem id="menu_meta_lead_log"
                   name="Audit Logs"
                   parent="menu_meta_leads_root"
                   action="action_meta_lead_log"
                   sequence="30"
-                  groups="meta_leads_webhook.group_meta_leads_admin"/>
+                  groups="bs_meta_leads_webhook.group_meta_leads_admin"/>
 
     </data>
 </odoo>
